@@ -3,33 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pak Tani DApp</title>
+    <title>Pak Tani Marketplace</title>
     
-    <!-- CSS Styling -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding-bottom: 60px; }
-        .navbar { background: #2E7D32; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .brand { font-weight: bold; font-size: 1.2rem; }
-        .container { max-width: 1000px; margin: 20px auto; padding: 0 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s; }
-        .card:hover { transform: translateY(-5px); }
-        .card img { width: 100%; height: 180px; object-fit: cover; }
-        .card-body { padding: 15px; }
-        .price { color: #2E7D32; font-weight: bold; font-size: 1.1rem; margin: 10px 0; }
-        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0fdf4; margin: 0; color: #333; }
+        .navbar { background: #166534; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card img { width: 100%; height: 150px; object-fit: cover; border-radius: 4px; }
+        .price { color: #15803d; font-weight: bold; font-size: 1.1rem; margin: 10px 0; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
         .btn-pi { background: #7B2CBF; }
-        .btn-buy { background: #2E7D32; width: 100%; margin-top: 10px; }
-        .btn-logout { background: #555; }
+        .btn-buy { background: #166534; width: 100%; margin-top: 10px; }
         .hidden { display: none; }
-        #loading { text-align: center; margin-top: 50px; font-size: 1.2rem; }
     </style>
 
-    <!-- Supabase SDK -->
+    <!-- Library Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Script Injeksi Vercel -->
+    <!-- 1. Script Vercel (Wajib Ada) -->
     <script>
         window.ENV = {
             SUPABASE_URL: "%VITE_SUPABASE_URL%",
@@ -39,36 +33,28 @@
 </head>
 <body>
 
-    <!-- Navbar -->
     <nav class="navbar">
-        <div class="brand"><i class="fa-solid fa-leaf"></i> PAK TANI</div>
+        <div style="font-weight:bold; font-size:1.2rem;">🌱 PAK TANI</div>
         <div id="authSection">
             <button class="btn btn-pi" id="btnLogin">Login Pi</button>
         </div>
     </nav>
 
-    <!-- Loading -->
-    <div id="loading">Memuat Pasar...</div>
-
-    <!-- Content -->
-    <div id="app" class="container hidden">
-        <h2 style="margin-bottom: 20px; color: #333;">Katalog Produk Segar</h2>
-        <div id="productList" class="grid"></div>
+    <div class="container">
+        <h2>Produk Pertanian</h2>
+        <div id="loading">Memuat data...</div>
+        <div id="productGrid" class="grid"></div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- 2. Logic Utama -->
     <script>
-        // 1. SETUP SUPABASE
-        const supabaseUrl = window.ENV.SUPABASE_URL;
-        const supabaseKey = window.ENV.SUPABASE_KEY;
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        // 2. STATE
+        // --- KONEKSI SUPABASE ---
+        const supabase = window.supabase.createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_KEY);
         let currentUser = null;
 
-        // 3. LOAD PI SDK
+        // --- LOAD PI SDK ---
         function loadPiSDK() {
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 if (window.Pi) { window.Pi.init({ version: "2.0", sandbox: true }); resolve(); return; }
                 const script = document.createElement('script');
                 script.src = "https://sdk.minepi.com/pi-sdk.js";
@@ -77,104 +63,66 @@
             });
         }
 
-        // 4. INIT APP
+        // --- INIT ---
         document.addEventListener('DOMContentLoaded', async () => {
             await loadPiSDK();
-
-            // Cek Session
-            const storedUser = localStorage.getItem('pak_tani_user');
-            if (storedUser) {
-                currentUser = JSON.parse(storedUser);
-                updateAuthUI(true);
+            
+            // Cek User
+            const stored = localStorage.getItem('pak_tani_user');
+            if (stored) {
+                currentUser = JSON.parse(stored);
+                updateAuth(true);
             }
 
-            // Fetch Produk
+            // Ambil Produk
             fetchProducts();
         });
 
-        // 5. FETCH PRODUCTS
+        // --- FUNGSI AMBIL PRODUK ---
         async function fetchProducts() {
-            const container = document.getElementById('productList');
+            const { data, error } = await supabase.from('products').select('*').limit(10);
+            const container = document.getElementById('productGrid');
             const loading = document.getElementById('loading');
 
-            try {
-                // Mengambil data dari tabel 'products'
-                const { data, error } = await supabase
-                    .from('products')
-                    .select('*')
-                    .limit(10);
+            loading.classList.add('hidden');
 
-                loading.classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
-
-                if (error) throw error;
-
-                if (data.length === 0) {
-                    container.innerHTML = "<p>Belum ada produk di database.</p>";
-                    return;
-                }
-
-                // Render Produk
-                container.innerHTML = data.map(p => `
-                    <div class="card">
-                        <img src="${p.image_url || 'https://picsum.photos/300'}" alt="${p.name}">
-                        <div class="card-body">
-                            <h3>${p.name}</h3>
-                            <div class="price">Rp ${p.price}</div>
-                            <small>${p.description || 'Hasil pertanian segar'}</small>
-                            <button class="btn btn-buy" onclick="handleBuy(${p.id}, '${p.name}')">Beli Sekarang</button>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (err) {
-                console.error(err);
-                loading.innerText = "Gagal memuat produk.";
-            }
-        }
-
-        // 6. LOGIN PI
-        async function handleLogin() {
-            if (!window.Pi) return alert("Pi SDK belum siap");
-            try {
-                const result = await window.Pi.authenticate();
-                currentUser = result.user;
-                localStorage.setItem('pak_tani_user', JSON.stringify(currentUser));
-                updateAuthUI(true);
-                alert(`Login Berhasil! Halo ${currentUser.username}`);
-            } catch (err) {
-                alert("Login gagal atau dibatalkan.");
-            }
-        }
-
-        // 7. BELI PRODUK (SIMPULASI)
-        window.handleBuy = function(id, name) {
-            if (!currentUser) {
-                alert("Anda harus login dengan Pi Network dulu!");
+            if (error) {
+                container.innerHTML = `<p style="color:red">Gagal ambil data: ${error.message}</p>`;
                 return;
             }
-            alert(`Fitur Beli: ${name} (ID: ${id})\n\nTransaksi akan diproses via Pi Payment...`);
-        };
 
-        // 8. LOGOUT
-        function handleLogout() {
-            localStorage.removeItem('pak_tani_user');
-            currentUser = null;
-            updateAuthUI(false);
-            location.reload();
+            container.innerHTML = data.map(p => `
+                <div class="card">
+                    <img src="${p.image_url || 'https://picsum.photos/200'}" alt="${p.name}">
+                    <h3>${p.name}</h3>
+                    <div class="price">Rp ${p.price}</div>
+                    <button class="btn btn-buy" onclick="alert('Beli ${p.name}')">Beli</button>
+                </div>
+            `).join('');
         }
 
-        function updateAuthUI(isLoggedIn) {
-            const section = document.getElementById('authSection');
+        // --- FUNGSI LOGIN ---
+        async function login() {
+            try {
+                const res = await window.Pi.authenticate();
+                currentUser = res.user;
+                localStorage.setItem('pak_tani_user', JSON.stringify(currentUser));
+                updateAuth(true);
+                alert("Login Berhasil!");
+            } catch (e) { alert("Login Gagal"); }
+        }
+
+        // --- UPDATE UI ---
+        function updateAuth(isLoggedIn) {
+            const sec = document.getElementById('authSection');
             if (isLoggedIn) {
-                section.innerHTML = `<span>Halo, ${currentUser.username}</span> <button class="btn btn-logout" onclick="handleLogout()">Keluar</button>`;
+                sec.innerHTML = `<span>Halo ${currentUser.username}</span> <button class="btn" style="background:#555" onclick="location.reload()">Keluar</button>`;
             } else {
-                section.innerHTML = `<button class="btn btn-pi" onclick="handleLogin()">Login Pi</button>`;
+                sec.innerHTML = `<button class="btn btn-pi" onclick="login()">Login Pi</button>`;
             }
         }
 
-        // Setup Event Listener Tombol Login Awal
-        document.getElementById('btnLogin').onclick = handleLogin;
+        document.getElementById('btnLogin').onclick = login;
     </script>
 </body>
 </html>
