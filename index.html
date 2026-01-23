@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pak Tani Marketplace</title>
     
-    <!-- Link CSS yang SUDAH DIPERBAIKI -->
+    <!-- Link ke CSS di ROOT -->
     <link rel="stylesheet" href="style.css">
     
     <!-- Font Awesome Icon -->
@@ -28,45 +28,73 @@
     <nav class="navbar">
         <div class="brand"><i class="fa-solid fa-leaf"></i> PAK TANI</div>
         <div class="nav-controls">
-            <div style="cursor:pointer;">
+            <!-- Tombol Keranjang (Onclick openCart) -->
+            <div style="cursor:pointer; display:flex; align-items:center; gap:5px; font-weight:600;" onclick="openCart()">
                 <i class="fa-solid fa-basket-shopping"></i> <span id="cartCount">0</span>
             </div>
+            
+            <!-- Area Login -->
             <div id="authSection">
                 <button class="btn btn-pi" id="btnLogin">Login Pi</button>
             </div>
         </div>
     </nav>
 
-    <!-- HERO -->
+    <!-- HERO SECTION -->
     <div class="hero">
         <h1>Pasar Digital Petani</h1>
-        <p>Jual hasil panenmu, atau beli kebutuhan dapur.</p>
+        <p>Platform jual beli hasil pertanian, aman, mudah, dan terpercaya.</p>
     </div>
 
-    <!-- CONTAINER -->
+    <!-- CONTAINER UTAMA -->
     <div class="container">
         
-        <!-- PANEL ADMIN (Hanya muncul jika Mode Penjual) -->
+        <!-- PANEL ADMIN (Upload Produk) -->
         <div id="adminPanel" class="admin-panel">
             <h3>Mode Penjual: Upload Produk</h3>
             <div id="uploadForm">
                 <input type="text" id="pName" class="input" placeholder="Nama Produk">
                 <input type="number" id="pPrice" class="input" placeholder="Harga (Rp)">
                 <input type="text" id="pImg" class="input" placeholder="URL Gambar">
-                <textarea id="pDesc" class="input" placeholder="Deskripsi"></textarea>
+                <textarea id="pDesc" class="input" placeholder="Deskripsi Produk"></textarea>
                 <button class="btn btn-upload" onclick="saveProduct()">Upload ke Pasar</button>
             </div>
         </div>
 
+        <!-- LIST PRODUK -->
         <h2>Katalog Pasar</h2>
         
-        <!-- LOADING & GRID -->
-        <div id="loading">Memuat...</div>
+        <!-- Loading Indicator -->
+        <div id="loading" style="text-align:center; padding:40px;">Memuat produk...</div>
+        
+        <!-- Grid Produk -->
         <div id="productGrid" class="grid"></div>
 
     </div>
 
-    <!-- LINK KE JS (Tetap di folder js) -->
+    <!-- MODAL KERANJANG BELANJA -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeCart()">&times;</span>
+            <h3>Keranjang Belanja</h3>
+            
+            <!-- List Item Keranjang -->
+            <div id="cartList" style="margin: 20px 0; max-height: 250px; overflow-y: auto;">
+                <p style="color:#666; text-align:center;">Keranjang masih kosong.</p>
+            </div>
+            
+            <!-- Total & Checkout Button -->
+            <div style="border-top: 1px solid #ddd; padding-top: 15px;">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.1rem; margin-bottom:15px;">
+                    <span>Total:</span>
+                    <span id="cartTotal">Rp 0</span>
+                </div>
+                <button class="btn btn-upload" onclick="processCheckout()">Checkout & Bayar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link ke Script JS -->
     <script src="js/script.js"></script>
 </body>
 </html>
