@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pi Marketplace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Pi SDK (WAJIB & HARUS INI) -->
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #app {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Pi Marketplace</h2>
+
+  <div id="loading">
+    <p>Loading Pi SDK...</p>
+  </div>
+
+  <div id="app">
+    <p id="welcome"></p>
+    <p>✅ Pi SDK & Login berhasil</p>
+  </div>
+
+  <script>
+    // 1️⃣ Pastikan Pi Browser
+    if (!window.Pi) {
+      document.getElementById("loading").innerHTML =
+        "<p>❌ Pi SDK not loaded.<br>Buka lewat Pi Browser.</p>";
+      throw new Error("Not Pi Browser");
+    }
+
+    // 2️⃣ Init Pi SDK
+    Pi.init({ version: "2.0" });
+
+    // 3️⃣ Login Pi
+    Pi.authenticate(
+      ["username"], // permissions
+      function onIncompletePaymentFound(payment) {
+        console.log("Incomplete payment:", payment);
+      }
+    )
+    .then(auth => {
+      console.log("PI AUTH:", auth);
+
+      const piUID = auth.user.uid;
+      const username = auth.user.username;
+
+      // Simpan global (nanti dipakai Supabase)
+      window.PI_UID = piUID;
+      window.PI_USER = auth.user;
+
+      // Update UI
+      document.getElementById("welcome").innerText =
+        "Welcome, " + username + " (UID: " + piUID + ")";
+
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("app").style.display = "block";
+
+      // 👉 NANTI: startApp()
+    })
+    .catch(err => {
+      console.error("Pi login error:", err);
+      document.getElementById("loading").innerHTML =
+        "<p>❌ Pi Login failed</p>";
+    });
+  </script>
+</body>
+</html>
