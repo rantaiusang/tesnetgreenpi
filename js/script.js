@@ -1,7 +1,7 @@
-// Koneksi Supabase
+// KONEKSI SUPABASE
 const supabase = window.supabase.createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_KEY);
 let currentUser = null;
-let cart = [];
+let cart = []; // Array menampung { id, name, price }
 
 // 1. LOAD PI SDK
 function loadPiSDK() {
@@ -17,6 +17,8 @@ function loadPiSDK() {
 // 2. INIT
 document.addEventListener('DOMContentLoaded', async () => {
     await loadPiSDK();
+    
+    // Load User
     const stored = localStorage.getItem('pak_tani_user');
     if (stored) {
         currentUser = JSON.parse(stored);
@@ -24,10 +26,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         updateAuth(false);
     }
+
     loadMarketplace();
 });
 
-// 3. UPDATE AUTH & ROLE
+// 3. AUTH & ROLE
 function updateAuth(isLoggedIn) {
     const authSection = document.getElementById('authSection');
     const adminPanel = document.getElementById('adminPanel');
@@ -40,7 +43,7 @@ function updateAuth(isLoggedIn) {
             </select>
             <button class="btn btn-pi" style="background:#555" onclick="logout()">Keluar</button>
         `;
-        adminPanel.style.display = 'none'; // Default hidden
+        adminPanel.style.display = 'none';
     } else {
         authSection.innerHTML = `<button class="btn btn-pi" id="btnLogin">Login Pi</button>`;
         document.getElementById('btnLogin').onclick = login;
@@ -48,17 +51,12 @@ function updateAuth(isLoggedIn) {
     }
 }
 
-// 4. SWITCH ROLE
 window.switchRole = function(role) {
     const panel = document.getElementById('adminPanel');
-    if (role === 'seller') {
-        panel.style.display = 'block';
-    } else {
-        panel.style.display = 'none';
-    }
+    panel.style.display = (role === 'seller') ? 'block' : 'none';
 }
 
-// 5. LOAD MARKETPLACE
+// 4. MARKETPLACE
 async function loadMarketplace() {
     const { data } = await supabase.from('products').select('*').order('id', { ascending: false });
     const container = document.getElementById('productGrid');
@@ -72,16 +70,104 @@ async function loadMarketplace() {
                 <div class="card-price">Rp ${p.price}</div>
                 <div class="btn-group">
                     <button class="btn btn-buy" onclick="buyNow(${p.id})">Beli</button>
-                    <button class="btn btn-pi" style="background:#fff3cd; color:#333" onclick="addToCart(${p.id})">+ Keranjang</button>
+                    <button class="btn btn-pi" style="background:#fff3cd; color:#333" onclick="addToCart(${p.id}, '${p.name}', ${p.price})">+ Keranjang</button>
                 </div>
             </div>
         </div>
     `).join('');
 }
 
-// 6. FUNCTIONS
-function addToCart(id) { cart.push({id}); document.getElementById('cartCount').innerText = cart.length; }
-async function buyNow(id) { if(!currentUser) return alert("Login dulu!"); alert("Fitur Pembayaran Pi segera hadir!"); }
+// 5. LOGIC KERANJANG (BARU)
+window.addToCart = function(id, name, price) {
+    cart.push({ id, name, price });
+    document.getElementById('cartCount').innerText = cart.length;
+    
+    // Animasi kecil
+    const btn = event.target;
+    const originalText = btn.innerText;
+    btn.innerText = "Masuk!";
+    setTimeout(() => btn.innerText = originalText, 500);
+}
+
+window.openCart = function() {
+    const modal = document.getElementById('cartModal');
+    const list = document.getElementById('cartList');
+    const totalEl = document.getElementById('cartTotal');
+    
+    if (cart.length === 0) {
+        list.innerHTML = "<p>Keranjang kosong.</p>";
+        totalEl.innerText = "Rp 0";
+    } else {
+        let total = 0;
+        list.innerHTML = cart.map((item, index) => {
+            total += item.price;
+            return `
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                    <span>${item.name}</span>
+                    <div>
+                        <strong>Rp ${item.price}</strong>
+                        <button onclick="removeFromCart(${index})" style="color:red; background:none; border:none; cursor:pointer; margin-left:10px;">x</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        totalEl.innerText = "Rp " + total;
+    }
+    
+    modal.style.display = 'flex';
+}
+
+window.removeFromCart = function(index) {
+    cart.splice(index, 1);
+    document.getElementById('cartCount').innerText = cart.length;
+    openCart(); // Refresh tampilan
+}
+
+window.closeCart = function() {
+    document.getElementById('cartModal').style.display = 'none';
+}
+
+// 6. LOGIC CHECKOUT & PEMBAYARAN
+window.processCheckout = async function() {
+    if (!currentUser) {
+        alert("Anda harus Login Pi dulu!");
+        closeCart();
+        return;
+    }
+
+    if (cart.length === 0) {
+        alert("Keranjang kosong!");
+        return;
+    }
+
+    // SIMULASI PROSES PEMBAYARAN
+    // Di produksi: Anda akan menggunakan Pi.createPayment() di sini
+    const totalHarga = cart.reduce((sum, item) => sum + item.price, 0);
+    const confirmBuy = confirm(`Total Belanja: Rp ${totalHarga}\n\nBayar dengan Saldo Pi Anda?`);
+
+    if (confirmBuy) {
+        // Simpan Order ke Supabase
+        const { error } = await supabase.from('order').insert([{
+            user_id: currentUser.uid,
+            total_amount: totalHarga,
+            status: 'paid', // Simulasi sukses bayar
+            created_at: new Date()
+        }]);
+
+        if (!error) {
+            alert("Pembayaran Berhasil! Terima kasih.");
+            cart = []; // Kosongkan keranjang
+            document.getElementById('cartCount').innerText = "0";
+            closeCart();
+            // Bisa redirect ke halaman 'Riwayat Pesanan' di sini
+        } else {
+            alert("Gagal menyimpan order: " + error.message);
+        }
+    }
+}
+
+// FUNGSI SUPPORT
+async function buyNow(id) { if(!currentUser) return alert("Login dulu!"); alert("Fitur Beli Langsung segera hadir."); }
 
 async function saveProduct() {
     const name = document.getElementById('pName').value;
