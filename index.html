@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pak Tani Marketplace - DApp</title>
+    
+    <!-- Memuat Style Global -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Memuat FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- ========================================= -->
+    <!-- BAGIAN 1: INJEKSI ENV VARIABLES VERCEL   -->
+    <!-- ========================================= -->
+    <script>
+        // Script ini akan membaca Environment Variables dari Vercel
+        // Saat di deploy, Vercel akan mengganti teks di dalam tanda % dengan nilai aslinya.
+        window.env = {
+            SUPABASE_URL: "%VITE_SUPABASE_URL%",
+            SUPABASE_KEY: "%VITE_SUPABASE_ANON_KEY%"
+        };
+    </script>
+
+    <!-- Memuat Supabase Client (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Loading Overlay (Muncul saat aplikasi dimuat) -->
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Memuat Pasar Pak Tani...</p>
+    </div>
+
+    <!-- Aplikasi Utama (Hidden sampai siap) -->
+    <div id="app" class="hidden">
+        
+        <!-- Navbar -->
+        <header class="navbar">
+            <div class="container">
+                <div class="brand">
+                    <i class="fa-solid fa-leaf"></i> PAK TANI
+                </div>
+                
+                <!-- Area Auth (Login/Logout) -->
+                <div id="authSection">
+                    <!-- Konten akan diisi oleh JS -->
+                </div>
+            </div>
+        </header>
+
+        <!-- Konten Utama -->
+        <main class="container">
+            
+            <!-- Hero Section -->
+            <section class="hero">
+                <h1>Hasil Bumi Segar dari Petani Lokal</h1>
+                <p id="welcome">Platform jual beli terdesentralisasi dengan Pi Network.</p>
+            </section>
+
+            <!-- Section Produk -->
+            <section class="products-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Katalog Produk</h2>
+                    <!-- Filter opsional bisa ditaruh di sini -->
+                </div>
+                
+                <!-- Grid Produk -->
+                <div id="products" class="products-grid">
+                    <!-- Produk akan di-render di sini oleh JS -->
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <p>&copy; 2023 Pak Tani Marketplace. Dibangun dengan Pi Network & Supabase.</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- BAGIAN 2: PEMANGGILAN JAVASCRIPT MODULE  -->
+    <!-- ========================================= -->
+    <!-- type="module" wajib ada agar import/export berfungsi -->
+    <script type="module" src="js/main.js"></script>
+    
+</body>
+</html>
