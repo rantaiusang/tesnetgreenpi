@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jelajah Hijau Dunia - GreenProof</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES --- */
+        :root {
+            --primary: #10b981;
+            --primary-dark: #047857;
+            --primary-light: #d1fae5;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --bg-body: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --radius: 16px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding-bottom: 80px;
+        }
+
+        /* --- NAVBAR UPDATE --- */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Kiri: Kembali, Kanan: CTA */
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        /* Style untuk Tombol Kembali */
+        .back-btn {
+            background: #f1f5f9;
+            color: var(--text-main);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none; /* Menghilangkan garis bawah link */
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .back-btn:hover { background: #e2e8f0; color: var(--primary-dark); }
+        .back-btn:active { transform: scale(0.95); }
+
+        .nav-btn {
+            background: var(--primary); color: white;
+            padding: 10px 20px; border-radius: 50px; text-decoration: none;
+            font-size: 0.9rem; font-weight: 600; transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+            border: none;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .nav-btn:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3); }
+
+        /* --- HERO SECTION UPDATE --- */
+        .hero {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            padding: 40px 20px 30px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Dekorasi background hero */
+        .hero::before {
+            content: ''; position: absolute; top: -50px; left: -50px;
+            width: 150px; height: 150px; background: rgba(255,255,255,0.4);
+            border-radius: 50%; z-index: 0;
+        }
+        .hero::after {
+            content: ''; position: absolute; bottom: -30px; right: -30px;
+            width: 100px; height: 100px; background: rgba(16, 185, 129, 0.1);
+            border-radius: 50%; z-index: 0;
+        }
+
+        .hero-content { position: relative; z-index: 1; }
+        
+        .hero h1 { 
+            font-size: 1.75rem; color: var(--primary-dark); margin-bottom: 10px; 
+            line-height: 1.2; letter-spacing: -0.5px;
+        }
+        .hero p { color: #064e3b; font-size: 0.95rem; max-width: 500px; margin: 0 auto 20px; line-height: 1.5; }
+        
+        .live-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(4px);
+            padding: 6px 16px; border-radius: 50px;
+            font-size: 0.8rem; font-weight: 700; color: var(--primary-dark);
+            margin-bottom: 16px; border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .live-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        /* --- STATS DASHBOARD (NEW) --- */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--surface);
+            padding: 16px 10px;
+            border-radius: var(--radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid #f1f5f9;
+        }
+        .stat-icon {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--primary-light); color: var(--primary-dark);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 8px; font-size: 1.1rem;
+        }
+        .stat-value { font-size: 1.1rem; font-weight: 800; color: var(--text-main); display: block; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+
+        /* --- SEARCH BAR (NEW) --- */
+        .search-container {
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
+            background: var(--surface);
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            box-shadow: var(--shadow);
+            transition: 0.3s;
+            outline: none;
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+        .search-icon {
+            position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* --- GRID SYSTEM --- */
+        .container { padding: 0 20px; max-width: 800px; margin: 0 auto; }
+        
+        .section-header {
+            display: flex; justify-content: space-between; align-items: end;
+            margin-bottom: 16px;
+        }
+        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+        
+        .masonry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+        }
+
+        .tree-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            border: 1px solid #f1f5f9;
+        }
+        .tree-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+
+        .tree-img-wrapper { position: relative; overflow: hidden; height: 160px; }
+        .tree-img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .tree-card:hover .tree-img { transform: scale(1.05); }
+        
+        .card-content { padding: 14px; }
+        .plant-name { 
+            font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+            color: var(--text-main);
+        }
+        .planter-name { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .planter-name i { font-size: 0.9rem; color: #cbd5e1; }
+        
+        .card-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 10px; border-top: 1px dashed #e2e8f0;
+        }
+        .time-posted { font-size: 0.7rem; color: #94a3b8; }
+        
+        .location-btn {
+            font-size: 0.75rem; color: var(--secondary); text-decoration: none;
+            display: flex; align-items: center; gap: 4px; font-weight: 600;
+        }
+        .location-btn:hover { text-decoration: underline; }
+        
+        .verified-badge {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(255,255,255, 0.95);
+            color: var(--primary); padding: 4px 8px; border-radius: 8px;
+            font-size: 0.7rem; font-weight: 700;
+            display: flex; align-items: center; gap: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        /* --- LOADING STATE --- */
+        .loading-state { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- EMPTY STATE --- */
+        .empty-state {
+            grid-column: 1/-1; text-align: center; padding: 60px 20px;
+            background: white; border-radius: var(--radius); border: 1px dashed #cbd5e1;
+        }
+        .empty-icon { font-size: 3rem; color: #e2e8f0; margin-bottom: 16px; }
+
+        @media (min-width: 768px) {
+            .dashboard-stats { gap: 24px; }
+            .masonry-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
+            .tree-img-wrapper { height: 200px; }
+            .hero { padding: 60px 20px 50px; border-radius: 40px; }
+            .hero h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR: Tombol Kembali & CTA -->
+    <nav>
+        <!-- TOMBOL KEMBALI: Sekarang menggunakan Link ke index.html -->
+        <a href="index.html" class="back-btn" aria-label="Kembali">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        
+        <!-- Tombol ini berubah jika user login (logic di JS) -->
+        <a href="login.html" id="action-btn" class="nav-btn">Gabung Menanam</a>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="live-badge"><div class="live-dot"></div> LIVE DATA</div>
+            <h1>Hutan Kota Digital</h1>
+            <p>Lihat ribuan pohon yang ditanam oleh Pioneer di seluruh dunia secara real-time.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <!-- DASHBOARD STATS -->
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-tree"></i></div>
+                <span class="stat-value">12.5k</span>
+                <span class="stat-label">Pohon Terdata</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-cloud"></i></div>
+                <span class="stat-value">450t</span>
+                <span class="stat-label">Karbon Terserap</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <span class="stat-value">3.2k</span>
+                <span class="stat-label">Pioneer Aktif</span>
+            </div>
+        </div>
+
+        <!-- SEARCH BAR -->
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Cari lokasi, jenis pohon, atau pioneer...">
+        </div>
+
+        <!-- GRID CONTAINER -->
+        <div class="section-header">
+            <h2 class="section-title">Tanaman Terbaru</h2>
+        </div>
+
+        <div id="grid-container" class="masonry-grid">
+            <!-- Loading State -->
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Mengambil data satelit...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from './js/supabase.js';
+        import { getSession } from './js/auth.js';
+
+        // Logic Navbar
+        const user = getSession();
+        const actionBtn = document.getElementById('action-btn');
+        
+        if(user) {
+            actionBtn.href = 'dashboard.html';
+            actionBtn.innerHTML = '<i class="fas fa-user"></i> Dashboard';
+            actionBtn.style.background = 'var(--primary-dark)';
+        } else {
+            // Default state sudah di-set di HTML
+        }
+
+        // Logic Load Trees
+        async function loadGlobalTrees() {
+            const container = document.getElementById('grid-container');
+            
+            // Simulasi sedikit delay agar loading terlihat (UX pattern)
+            await new Promise(r => setTimeout(r, 800));
+
+            const { data: trees, error } = await supabase
+                .from('trees')
+                .select(`
+                    id,
+                    plant_name,
+                    gps_lat,
+                    gps_long,
+                    photo_url,
+                    created_at,
+                    users ( username )
+                `)
+                .eq('status', 'verified')
+                .order('created_at', { ascending: false })
+                .limit(12);
+
+            if (error) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle empty-icon" style="color: #ef4444;"></i>
+                        <p>Terjadi kesalahan jaringan.</p>
+                    </div>`;
+                console.error(error);
+                return;
+            }
+
+            if (!trees || trees.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-seedling empty-icon"></i>
+                        <p>Belum ada data pohon yang tersedia.</p>
+                        <button class="nav-btn" style="margin-top:15px; border:none; cursor:pointer;" onclick="window.location.href='plant.html'">Tanam Sekarang</button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = ''; // Hapus loading
+
+            trees.forEach(tree => {
+                const username = tree.users ? tree.users.username : 'Pioneer';
+                const plantName = tree.plant_name || 'Tanaman Hijau';
+                const mapLink = `https://maps.google.com/?q=${tree.gps_lat},${tree.gps_long}`;
+                const imgSrc = tree.photo_url || `https://picsum.photos/seed/${tree.id}/300/300`;
+
+                const card = document.createElement('div');
+                card.className = 'tree-card';
+                card.onclick = () => window.open(mapLink, '_blank');
+
+                card.innerHTML = `
+                    <div class="tree-img-wrapper">
+                        <div class="verified-badge"><i class="fas fa-check-circle"></i> Verified</div>
+                        <img src="${imgSrc}" class="tree-img" alt="${plantName}" loading="lazy">
+                    </div>
+                    <div class="card-content">
+                        <div class="plant-name" title="${plantName}">${plantName}</div>
+                        <div class="planter-name">
+                            <i class="fas fa-user-circle"></i> ${username}
+                        </div>
+                        <div class="card-footer">
+                            <span class="time-posted">
+                                ${new Date(tree.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}
+                            </span>
+                            <a href="${mapLink}" target="_blank" class="location-btn" onclick="event.stopPropagation()">
+                                Lokasi <i class="fas fa-location-arrow"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        loadGlobalTrees();
+    </script>
+</body>
+</html>

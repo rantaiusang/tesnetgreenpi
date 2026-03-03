@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Detail Pohon - GreenProof</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { 
+            --primary: #10b981; 
+            --primary-dark: #047857;
+            --bg: #f8fafc; 
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            padding-bottom: 90px; /* Ruang untuk tombol FAB */
+            color: var(--text-main);
+        }
+        
+        /* --- HEADER --- */
+        header { 
+            background: var(--surface); 
+            padding: 16px 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100;
+        }
+        
+        .back-btn { 
+            border: none; background: none; font-size: 1.2rem; 
+            cursor: pointer; color: var(--text-main); padding: 5px;
+            text-decoration: none; /* Jika pakai link, hilangkan garis bawah */
+            display: flex;
+            align-items: center;
+        }
+        .back-btn:hover { color: var(--primary); }
+        
+        header h3 { 
+            margin: 0; font-size: 1.1rem; font-weight: 700; flex: 1; 
+            text-align: center; /* Center title */
+            padding-right: 30px; /* Kompensasi lebar tombol back agar title benar2 di tengah */
+        }
+        
+        .action-btn {
+            font-size: 1.1rem; color: var(--text-muted); background: none; border: none; cursor: pointer;
+        }
+        
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        
+        /* --- HERO CARD --- */
+        .hero-card { 
+            background: white; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            margin-bottom: 24px; 
+            border: 1px solid #f1f5f9;
+        }
+        .tree-hero-img { 
+            width: 100%; height: 280px; object-fit: cover; 
+            background: #e2e8f0;
+        }
+        .tree-info { padding: 24px; }
+        
+        .tree-header-row {
+            display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;
+        }
+        .tree-title { 
+            font-size: 1.5rem; font-weight: 800; color: var(--text-main); line-height: 1.2; margin: 0; 
+        }
+        
+        .status-badge { 
+            background: #ecfdf5; color: var(--primary-dark); 
+            padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; margin-left: 10px;
+        }
+        
+        .tree-meta { 
+            font-size: 0.85rem; color: var(--text-muted); 
+            display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; 
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .meta-item { display: flex; align-items: center; gap: 6px; }
+        
+        .location-link {
+            color: var(--primary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;
+        }
+        
+        /* --- TIMELINE --- */
+        .section-title { 
+            font-size: 1.1rem; font-weight: 700; margin: 24px 0 16px 0; 
+            display: flex; align-items: center; gap: 8px;
+        }
+        .timeline { 
+            border-left: 2px solid #e2e8f0; margin-left: 10px; padding-left: 24px; 
+        }
+        .timeline-item { position: relative; margin-bottom: 30px; }
+        .timeline-dot { 
+            position: absolute; left: -31px; top: 0; width: 12px; height: 12px; 
+            background: var(--primary); border-radius: 50%; border: 3px solid white; 
+            box-shadow: 0 0 0 1px #e2e8f0;
+        }
+        .update-date { font-size: 0.75rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+        .update-content { 
+            background: white; padding: 16px; border-radius: 12px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;
+        }
+        .update-content img { width: 100%; border-radius: 8px; margin-top: 10px; }
+        
+        /* --- FAB UPDATE --- */
+        .fab-update {
+            position: fixed; bottom: 25px; right: 25px;
+            background: var(--primary); color: white;
+            padding: 14px 28px; border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.4);
+            text-decoration: none; font-weight: 600; display: flex; gap: 10px; align-items: center;
+            border: none; cursor: pointer; z-index: 900;
+            transition: transform 0.2s;
+        }
+        .fab-update:active { transform: scale(0.95); }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 1000;
+            align-items: center; justify-content: center; backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from{opacity:0; transform:scale(0.9);} to{opacity:1; transform:scale(1);} }
+
+        .form-group { margin-bottom: 15px; }
+        .form-input {
+            width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px;
+            font-size: 1rem; outline: none; transition: 0.2s;
+        }
+        .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+        
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; }
+        .btn-cancel { background: #f1f5f9; color: var(--text-main); }
+        .btn-submit { background: var(--primary); color: white; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header dengan Tombol Kembali ke Dashboard -->
+    <header>
+        <!-- UPDATE: Link Langsung ke Dashboard -->
+        <a href="dashboard.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h3>Detail Pohon</h3>
+        <!-- Spacer tombol kanan agar title tetap di tengah -->
+        <button class="action-btn" onclick="shareTree()" aria-label="Share">
+            <i class="fas fa-share-alt"></i>
+        </button>
+    </header>
+
+    <div class="container">
+        <!-- Informasi Utama Pohon -->
+        <div class="hero-card">
+            <img id="detail-img" src="" class="tree-hero-img" alt="Pohon" onerror="this.src='https://placehold.co/600x400/10b981/ffffff?text=Tree'">
+            <div class="tree-info">
+                <div class="tree-header-row">
+                    <h1 id="detail-name" class="tree-title">Loading...</h1>
+                    <span id="detail-status" class="status-badge">Pending</span>
+                </div>
+                
+                <div class="tree-meta">
+                    <span class="meta-item"><i class="fas fa-user-circle"></i> <span id="detail-user">User</span></span>
+                    <span class="meta-item"><i class="fas fa-calendar-alt"></i> <span id="detail-date">Date</span></span>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <a id="location-link" href="#" target="_blank" class="location-link">
+                        <i class="fas fa-map-marker-alt"></i> Lihat Lokasi di Peta
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Perkembangan -->
+        <div class="section-title">
+            <i class="fas fa-history" style="color: var(--primary);"></i> Riwayat Pertumbuhan
+        </div>
+        <div id="updates-list" class="timeline">
+            <!-- Item timeline akan di-load lewat JS -->
+            <p style="color: #94a3b8; font-size: 0.9rem; text-align:center;">Memuat data...</p>
+        </div>
+    </div>
+
+    <!-- Tombol Floating Action Update -->
+    <button class="fab-update" id="btn-update" onclick="openUpdateModal()">
+        <i class="fas fa-camera"></i> Update Progress
+    </button>
+
+    <!-- Modal Form Update -->
+    <div id="update-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-top:0; font-size:1.25rem;">Update Perkembangan</h3>
+            <p style="font-size:0.9rem; color:#64748b; margin-bottom:20px;">Catat pertumbuhan pohon ini bulan ini.</p>
+            
+            <div class="form-group">
+                <label style="display:block; margin-bottom:6px; font-weight:600; font-size:0.9rem;">Tinggi Pohon (cm)</label>
+                <input type="number" id="update-height" class="form-input" placeholder="Contoh: 150">
+            </div>
+            
+            <div class="form-group">
+                <label style="display:block; margin-bottom:6px; font-weight:600; font-size:0.9rem;">Catatan Kondisi</label>
+                <input type="text" id="update-note" class="form-input" placeholder="Daun baru bertumbuh, sehat...">
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeUpdateModal()">Batal</button>
+                <button class="btn btn-submit" onclick="submitUpdate()">Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from './js/supabase.js';
+        import { getSession as getAuthSession } from './js/auth.js';
+
+        // Ambil ID Pohon dari URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const treeId = urlParams.get('id');
+        let currentTreeData = null;
+
+        // Fungsi Share Sederhana
+        window.shareTree = () => {
+            if (navigator.share && currentTreeData) {
+                navigator.share({
+                    title: `Lihat Pohon ${currentTreeData.plant_name} saya di GreenProof`,
+                    text: `Saya baru saja menanam ${currentTreeData.plant_name}! Yuk lihat perkembangannya.`,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback copy link
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link berhasil disalin!');
+            }
+        };
+
+        async function loadTreeDetail() {
+            if(!treeId) return window.location.href = 'dashboard.html';
+
+            // 1. Fetch Data Pohon dengan Join User
+            const { data: tree, error } = await supabase
+                .from('trees')
+                .select(`*, users(username)`)
+                .eq('id', treeId)
+                .single();
+
+            if (error || !tree) {
+                alert("Data pohon tidak ditemukan.");
+                return window.location.href = 'dashboard.html';
+            }
+
+            currentTreeData = tree;
+
+            // 2. Render Header Info
+            document.getElementById('detail-name').innerText = tree.plant_name || 'Pohon Hijau';
+            document.getElementById('detail-img').src = tree.photo_url || `https://placehold.co/600x400/10b981/ffffff?text=Tree`;
+            document.getElementById('detail-user').innerText = tree.users ? tree.users.username : 'Unknown';
+            document.getElementById('detail-date').innerText = new Date(tree.planted_at || tree.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'});
+            
+            // Setup Link Maps
+            const mapUrl = `https://maps.google.com/?q=${tree.gps_lat},${tree.gps_long}`;
+            document.getElementById('location-link').href = mapUrl;
+
+            // Setup Badge Status
+            const statusEl = document.getElementById('detail-status');
+            statusEl.innerText = tree.status === 'verified' ? 'VERIFIED' : 'PENDING';
+            if(tree.status === 'verified') {
+                statusEl.style.background = '#ecfdf5';
+                statusEl.style.color = '#047857';
+            } else {
+                statusEl.style.background = '#fffbeb';
+                statusEl.style.color = '#b45309';
+            }
+
+            // Cek apakah user ini pemilik pohon untuk menampilkan tombol update
+            const currentUser = getAuthSession();
+            const updateBtn = document.getElementById('btn-update');
+            if (currentUser && currentUser.uid === tree.user_id) {
+                updateBtn.style.display = 'flex';
+            } else {
+                updateBtn.style.display = 'none'; // Sembunyikan tombol update jika bukan pemilik
+            }
+
+            // 3. Fetch Updates Timeline
+            const { data: updates } = await supabase
+                .from('tree_updates')
+                .select('*')
+                .eq('tree_id', treeId)
+                .order('created_at', { ascending: false });
+
+            renderUpdates(updates);
+        }
+
+        function renderUpdates(updates) {
+            const container = document.getElementById('updates-list');
+            container.innerHTML = '';
+
+            if(!updates || updates.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:20px; color:#94a3b8;">
+                        <i class="fas fa-seedling" style="font-size:2rem; margin-bottom:10px; opacity:0.3;"></i>
+                        <p style="font-size:0.9rem;">Belum ada data perkembangan.</p>
+                    </div>`;
+                return;
+            }
+
+            updates.forEach((u, index) => {
+                const html = `
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="update-date">${new Date(u.created_at).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                    <div class="update-content">
+                        <div style="font-weight:700; color:var(--text-main); margin-bottom:4px; font-size:1rem;">
+                            <i class="fas fa-ruler-vertical" style="color:var(--primary); margin-right:5px;"></i> Tinggi: ${u.height_cm} cm
+                        </div>
+                        <div style="font-size:0.9rem; color:#64748b; margin-bottom:8px;">${u.note || 'Tidak ada catatan tambahan.'}</div>
+                        ${u.photo_url ? `<img src="${u.photo_url}" alt="Update Photo">` : ''}
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // --- Logic Update Modal ---
+        window.openUpdateModal = () => {
+            document.getElementById('update-modal').style.display = 'flex';
+            // Reset inputs
+            document.getElementById('update-height').value = '';
+            document.getElementById('update-note').value = '';
+        };
+        
+        window.closeUpdateModal = () => document.getElementById('update-modal').style.display = 'none';
+
+        window.submitUpdate = async () => {
+            const user = getAuthSession();
+            if (!user) return alert('Sesi habis, silakan login.');
+
+            const height = document.getElementById('update-height').value;
+            const note = document.getElementById('update-note').value;
+
+            if(!height || height <= 0) return alert('Masukkan tinggi pohon dengan benar!');
+
+            // Tombol loading state
+            const submitBtn = document.querySelector('.btn-submit');
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = 'Mengirim...';
+            submitBtn.disabled = true;
+
+            // Insert Update Baru
+            const { error } = await supabase.from('tree_updates').insert([{
+                tree_id: treeId,
+                user_id: user.uid,
+                height_cm: parseFloat(height),
+                note: note,
+                photo_url: currentTreeData.photo_url // Untuk demo, pakai foto lama.
+            }]);
+
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+
+            if(error) {
+                alert('Gagal update: ' + error.message);
+            } else {
+                alert('Update berhasil disimpan!');
+                closeUpdateModal();
+                loadTreeDetail(); // Refresh timeline
+            }
+        };
+
+        // Jalankan saat load
+        loadTreeDetail();
+    </script>
+</body>
+</html>

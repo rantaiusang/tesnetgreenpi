@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenProof - Ekosistem Carbon Credit Modern</title>
+    
+    <!-- Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Icons: FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 1. CSS VARIABLES & RESET --- */
+        :root {
+            /* Palette Colors */
+            --primary: #10b981;       /* Emerald 500 */
+            --primary-dark: #059669;  /* Emerald 600 */
+            --primary-light: #d1fae5; /* Emerald 100 */
+            --accent: #3b82f6;        /* Blue 500 */
+            --dark: #0f172a;          /* Slate 900 */
+            --text-main: #334155;     /* Slate 700 */
+            --text-light: #64748b;    /* Slate 500 */
+            --bg-body: #f8fafc;       /* Slate 50 */
+            --white: #ffffff;
+            
+            /* UI Effects */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.3);
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+            
+            /* Animation Timing */
+            --transition-fast: 0.2s ease;
+            --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+
+        /* --- 2. UTILITY CLASSES FOR ANIMATION --- */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+            will-change: opacity, transform;
+        }
+        
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+
+        /* --- 3. NAVBAR --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { color: var(--primary); }
+
+        .nav-cta {
+            padding: 0.75rem 1.75rem;
+            background: var(--dark);
+            color: var(--white);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-cta::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: var(--transition-fast);
+            z-index: 0;
+        }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+        .nav-cta:hover::before { opacity: 1; }
+        .nav-cta span { position: relative; z-index: 1; }
+
+        /* --- 4. HERO SECTION --- */
+        .hero {
+            padding: 160px 5% 100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            position: relative;
+            background: radial-gradient(circle at 80% 20%, var(--primary-light) 0%, transparent 40%);
+            overflow: hidden;
+        }
+
+        .hero-content {
+            flex: 1;
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-dark);
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            color: var(--dark);
+            letter-spacing: -0.02em;
+        }
+        
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-light);
+            margin-bottom: 40px;
+            max-width: 90%;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 14px 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: var(--transition-smooth);
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
+
+        /* Style tombol Secondary/Outline */
+        .btn-secondary {
+            padding: 14px 32px;
+            background: transparent;
+            color: var(--dark);
+            border: 2px solid var(--dark);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            transition: var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-secondary:hover { background: var(--dark); color: white; transform: translateY(-3px); }
+
+        .btn-outline {
+            padding: 14px 32px;
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            transition: var(--transition-smooth);
+        }
+        .btn-outline:hover { border-color: var(--dark); background: var(--white); color: var(--dark); }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .hero-img-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+            transition: transform 0.6s ease;
+        }
+        
+        .hero-img-container:hover {
+            transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+        }
+
+        .hero-img-container img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.8s ease;
+        }
+        .hero-img-container:hover img { transform: scale(1.05); }
+
+        /* --- 5. FEATURES --- */
+        .features { padding: 100px 5%; background: var(--white); }
+        
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 80px;
+        }
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 16px;
+        }
+        .section-header p { color: var(--text-light); font-size: 1.1rem; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg-body);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid transparent;
+            transition: var(--transition-smooth);
+        }
+
+        .feature-card:hover {
+            background: var(--white);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(16, 185, 129, 0.1);
+            transform: translateY(-8px);
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            transition: 0.3s;
+        }
+        .feature-card:hover .icon-box { background: var(--primary); color: var(--white); }
+
+        .feature-card h3 { font-size: 1.25rem; margin-bottom: 12px; color: var(--dark); }
+        .feature-card p { color: var(--text-light); font-size: 0.95rem; line-height: 1.6; }
+
+        /* --- 6. HOW IT WORKS --- */
+        .how-it-works { padding: 100px 5%; background: var(--bg-body); }
+
+        .steps-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .step-item {
+            flex: 1;
+            min-width: 280px;
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+        
+        .step-item:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+
+        .step-number {
+            position: absolute;
+            top: 20px; right: 20px;
+            width: 40px; height: 40px;
+            background: var(--dark);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            z-index: 2;
+        }
+
+        .step-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .step-content { padding: 30px; }
+        .step-content h3 { font-size: 1.25rem; margin-bottom: 10px; color: var(--dark); }
+        .step-content p { color: var(--text-light); font-size: 0.9rem; }
+
+        /* --- 7. CTA SECTION --- */
+        .cta-section {
+            padding: 80px 5%;
+            margin: 60px 5%;
+            background: linear-gradient(120deg, var(--dark) 0%, #1e293b 100%);
+            border-radius: 32px;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -10%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .cta-section h2 { font-size: 2.5rem; margin-bottom: 16px; position: relative; z-index: 1; }
+        .cta-section p { color: #cbd5e1; margin-bottom: 32px; max-width: 600px; margin-left: auto; margin-right: auto; position: relative; z-index: 1; }
+
+        /* --- 8. FOOTER (SIMPLIFIED) --- */
+        footer {
+            background: var(--white);
+            padding: 80px 5% 30px;
+            border-top: 1px solid #e2e8f0;
+            margin-top: auto;
+        }
+
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        .footer-info p {
+            color: var(--text-light);
+            margin-top: 16px;
+            font-size: 0.9rem;
+            max-width: 300px;
+        }
+
+        .footer-col h4 {
+            color: var(--dark);
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .footer-col ul li { margin-bottom: 12px; }
+        .footer-col a {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .footer-col a:hover { color: var(--primary); padding-left: 5px; }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 60px auto 0;
+            padding-top: 30px;
+            border-top: 1px solid #f1f5f9;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- 9. TOAST --- */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--white);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 2000;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast i { color: var(--primary); font-size: 1.2rem; }
+        .toast-content h5 { font-size: 0.95rem; color: var(--dark); }
+        .toast-content p { font-size: 0.8rem; color: var(--text-light); }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .hero { flex-direction: column; text-align: center; padding-top: 140px; gap: 60px; }
+            .hero-content { margin: 0; }
+            .hero-buttons { justify-content: center; }
+            .hero h1 { font-size: 2.8rem; }
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .footer-info p { margin: 16px auto; }
+            .footer-bottom { flex-direction: column; gap: 10px; }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .nav-cta { padding: 10px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-leaf"></i> Green Pi
+        </div>
+        <a href="login.html" class="nav-cta" onclick="showToast('Redirecting...', 'Mengarahkan ke halaman login.')">
+            <span>Login</span> <i class="fas fa-arrow-right" style="margin-left: 8px; font-size: 0.8em;"></i>
+        </a>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content fade-up">
+            <span class="badge">
+                <i class="fab fa-pi" style="color:#6B21A8"></i> Powered by Pi Network
+            </span>
+            <h1>Ubah Penanaman Pohon Jadi <span>Aset Digital</span></h1>
+            <p>Platform verifikasi carbon credit generasi baru. Tanam, verifikasi via blockchain, dan miliki aset lingkungan yang transparan.</p>
+            <div class="hero-buttons">
+                <a href="login.html" class="btn-primary">Gabung Ekosistem</a>
+                <!-- Tombol Menuju Global Map -->
+                <a href="global-map.html" class="btn-secondary">
+                    <i class="fas fa-map-marked-alt"></i> Jelajahi Peta
+                </a>
+                <a href="#how" class="btn-outline">Pelajari Cara Kerja</a>
+            </div>
+        </div>
+        
+        <div class="hero-image fade-up delay-200">
+            <div class="hero-img-container">
+                <img src="https://picsum.photos/seed/foresttech/600/700" alt="Teknologi Hijau">
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features">
+        <div class="section-header fade-up">
+            <h2>Keunggulan Teknologi Kami</h2>
+            <p>Menggabungkan kepedulian lingkungan dengan ketangguhan teknologi blockchain terdesentralisasi.</p>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card fade-up delay-100">
+                <div class="icon-box"><i class="fas fa-satellite-dish"></i></div>
+                <h3>GPS Geotagging</h3>
+                <p>Setiap pohon dikunci koordinatnya secara presisi menggunakan satelit, mencegah manipulasi data lokasi.</p>
+            </div>
+            <div class="feature-card fade-up delay-200">
+                <div class="icon-box"><i class="fas fa-link"></i></div>
+                <h3>Integrasi Pi Blockchain</h3>
+                <p>Transaksi carbon credit yang aman, cepat, dan biaya rendah menggunakan jaringan Pi Network.</p>
+            </div>
+            <div class="feature-card fade-up delay-300">
+                <div class="icon-box"><i class="fas fa-file-contract"></i></div>
+                <h3>Smart Contract</h3>
+                <p>Keuntungan dari penanaman didistribusikan secara otomatis dan transparan ke penanam.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how" class="how-it-works">
+        <div class="section-header fade-up">
+            <h2>Alur Kerja Sederhana</h2>
+            <p>Dari benih di tanah hingga kredit di dompet digital.</p>
+        </div>
+
+        <div class="steps-container">
+            <div class="step-item fade-up delay-100">
+                <div class="step-number">1</div>
+                <img src="https://picsum.photos/seed/planting/400/300" alt="Menanam" class="step-img">
+                <div class="step-content">
+                    <h3>Aksi Nyata</h3>
+                    <p>Lakukan penanaman di area reboisasi atau kebun Anda.</p>
+                </div>
+            </div>
+            
+            <div class="step-item fade-up delay-200">
+                <div class="step-number">2</div>
+                <img src="https://picsum.photos/seed/mobileapp/400/300" alt="Upload Data" class="step-img">
+                <div class="step-content">
+                    <h3>Verifikasi Digital</h3>
+                    <p>Upload foto dan data lokasi. AI kami akan memvalidasi.</p>
+                </div>
+            </div>
+
+            <div class="step-item fade-up delay-300">
+                <div class="step-number">3</div>
+                <img src="https://picsum.photos/seed/coin/400/300" alt="Cuan" class="step-img">
+                <div class="step-content">
+                    <h3>Dapatkan Cuan</h3>
+                    <p>Terima Carbon Credit yang dapat ditukar atau dijual.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <div class="fade-up">
+        <section class="cta-section">
+            <h2>Siap Selamatkan Bumi?</h2>
+            <p>Bergabunglah dengan ribuan penanam lainnya dan mulai bangun portofolio hijau Anda hari ini.</p>
+            <a href="login.html" class="btn-primary" style="background: white; color: var(--dark);">Mulai Sekarang</a>
+        </section>
+    </div>
+
+    <!-- FOOTER (DIBERSIHKAN) -->
+    <footer>
+        <div class="footer-grid">
+            <!-- Kolom Brand -->
+            <div class="footer-info">
+                <div class="logo"><i class="fas fa-leaf"></i> Green Pi</div>
+                <p>Masa depan keberlanjutan ada di tangan kita. Kami memberikan alat untuk mengukur dan memberi reward pada setiap aksi baik Anda terhadap bumi.</p>
+                <div style="margin-top: 20px; display: flex; gap: 15px;">
+                    <a href="#"><i class="fab fa-twitter" style="color:var(--text-light)"></i></a>
+                    <a href="#"><i class="fab fa-instagram" style="color:var(--text-light)"></i></a>
+                    <a href="#"><i class="fab fa-discord" style="color:var(--text-light)"></i></a>
+                </div>
+            </div>
+            
+            <!-- Kolom Links HANYA 3 Item (About, Privacy, Terms) -->
+            <div class="footer-col">
+                <h4>Informasi</h4>
+                <ul>
+                    <li><a href="about.html">Tentang Kami</a></li>
+                    <li><a href="privacy.html">Kebijakan Privasi</a></li>
+                    <li><a href="terms.html">Syarat & Ketentuan</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 GreenPi Inc. All rights reserved.</p>
+            <p>zero Core</p>
+        </div>
+    </footer>
+
+    <!-- TOAST NOTIFICATION ELEMENT -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <div class="toast-content">
+            <h5 id="toast-title">Sukses</h5>
+            <p id="toast-message">Operasi berhasil.</p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const fadeElements = document.querySelectorAll('.fade-up');
+            fadeElements.forEach(el => observer.observe(el));
+        });
+
+        function showToast(title, message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-message').innerText = message;
+            
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

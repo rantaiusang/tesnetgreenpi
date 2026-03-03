@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kebijakan Privasi - GreenProof</title>
+    
+    <!-- Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons: FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES (Match Index Style) --- */
+        :root {
+            --primary: #10b981;       /* Emerald Green */
+            --primary-dark: #047857;  /* Darker Green */
+            --primary-light: #d1fae5; /* Light Green BG */
+            --text-main: #1e293b;     /* Slate 800 */
+            --text-muted: #64748b;    /* Slate 500 */
+            --bg-body: #f8fafc;       /* Slate 50 */
+            --surface: #ffffff;       /* White */
+            --border: #e2e8f0;        /* Slate 200 */
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --radius: 16px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- ANIMATION UTILITIES --- */
+        /* Base state for scroll animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+
+        /* Active state when visible */
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Staggered delays for list items */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+
+        /* --- HEADER / NAVBAR --- */
+        header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.1rem;
+            margin-right: 15px;
+            cursor: pointer;
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s ease;
+        }
+        .back-btn:hover {
+            background-color: var(--bg-body);
+            color: var(--primary);
+        }
+        
+        header h1 { 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            margin: 0; 
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        /* --- CONTENT CONTAINER --- */
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 30px 20px;
+            flex: 1;
+        }
+        
+        /* --- INTRO BOX (Hero Section) --- */
+        .intro-box {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--primary-light) 100%);
+            border: 1px solid #d1fae5;
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Decorative icon background */
+        .intro-box::before {
+            content: '\f1de'; /* Shield Icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: -10px; right: -10px;
+            font-size: 8rem;
+            color: var(--primary);
+            opacity: 0.05;
+            transform: rotate(15deg);
+        }
+
+        .intro-box i.main-icon {
+            font-size: 2.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        
+        .intro-box h2 { 
+            color: var(--primary-dark); 
+            font-size: 1.4rem; 
+            margin-bottom: 10px; 
+            position: relative;
+            z-index: 2;
+        }
+        
+        .intro-box p { 
+            color: #064e3b; 
+            font-size: 0.95rem; 
+            margin: 0; 
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- SECTION BLOCKS (Cards) --- */
+        .section-block {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease;
+        }
+        .section-block:hover {
+            border-color: var(--primary);
+        }
+
+        .section-title {
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            color: var(--text-main);
+            margin-bottom: 20px; 
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--bg-body);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        h3 {
+            font-size: 1.05rem; 
+            font-weight: 600; 
+            margin-top: 24px; 
+            margin-bottom: 12px;
+            color: var(--text-main);
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        h3::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            margin-top: 8px;
+            margin-right: 10px;
+        }
+
+        p { 
+            font-size: 0.95rem; 
+            color: var(--text-muted); 
+            margin-bottom: 16px; 
+            text-align: justify; 
+        }
+        
+        ul { 
+            margin-left: 10px; 
+            margin-bottom: 20px; 
+            color: var(--text-muted); 
+            font-size: 0.95rem; 
+            list-style: none;
+            padding-left: 10px;
+        }
+        
+        li { 
+            margin-bottom: 12px; 
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        li::before {
+            content: '•';
+            color: var(--primary);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        strong { color: var(--text-main); font-weight: 600; }
+
+        /* --- ALERT BOX --- */
+        .alert-box {
+            background: #fff7ed;
+            border-left: 4px solid #f97316;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 0.9rem; 
+            color: #9a3412;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .alert-box i { margin-top: 4px; color: #f97316; }
+        .alert-box strong { display: block; margin-bottom: 5px; color: #7c2d12; }
+
+        /* --- FOOTER --- */
+        .footer-note {
+            text-align: center; 
+            font-size: 0.85rem; 
+            color: var(--text-muted);
+            margin-top: 60px; 
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 600px) {
+            .container { padding: 20px 15px; }
+            .section-block { padding: 20px; }
+            .intro-box { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <!-- Button ini menggunakan fungsi goBack() -->
+        <button class="back-btn" onclick="goBack()" aria-label="Kembali">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        
+    </header>
+
+    <div class="container">
+        
+        <!-- INTRO SECTION -->
+        <div class="intro-box reveal">
+            <i class="fas fa-shield-alt main-icon"></i>
+            <h2>Privasi Anda Prioritas Kami</h2>
+            <p>Kami berkomitmen untuk melindungi data pribadi Anda. Kebijakan ini menjelaskan bagaimana GreenProof mengumpulkan, menggunakan, dan membagikan data Anda.</p>
+        </div>
+
+        <!-- 1. PENGUMPULAN DATA -->
+        <div class="section-block reveal delay-1">
+            <div class="section-title">
+                <i class="fas fa-database"></i> 1. Data yang Kami Kumpulkan
+            </div>
+            <p>Kami mengumpulkan informasi berikut untuk menyediakan layanan verifikasi pohon yang akurat:</p>
+            
+            <h3>A. Data Identitas (Pi Network)</h3>
+            <ul>
+                <li><strong>Username:</strong> Nama pengguna akun Pi Anda.</li>
+                <li><strong>Wallet Address:</strong> Alamat dompet unik Anda (digunakan untuk identifikasi dan pembagian reward).</li>
+            </ul>
+
+            <h3>B. Data Geolokasi (GPS)</h3>
+            <ul>
+                <li><strong>Koordinat:</strong> Latitude dan Longitude presisi tinggi tempat Anda menanam pohon.</li>
+                <li><strong>Tujuan:</strong> Untuk memverifikasi bahwa pohon benar-benar ditanam di lokasi tersebut dan mencegah klaim lokasi ganda.</li>
+            </ul>
+
+            <h3>C. Data Media</h3>
+            <ul>
+                <li><strong>Foto & Video:</strong> Bukti visual penanaman dan perkembangan pohon yang Anda unggah.</li>
+            </ul>
+        </div>
+
+        <!-- 2. PENGGUNAAN DATA -->
+        <div class="section-block reveal delay-1">
+            <div class="section-title">
+                <i class="fas fa-cogs"></i> 2. Bagaimana Kami Menggunakan Data
+            </div>
+            <p>Data Anda digunakan secara etis untuk keperluan berikut:</p>
+            <ul>
+                <li><strong>Verifikasi:</strong> Memvalidasi kebenaran klaim penanaman pohon oleh tim validator atau admin.</li>
+                <li><strong>Tracking:</strong> Mencatat pertumbuhan pohon dari waktu ke waktu (fitur update progress).</li>
+                <li><strong>Reward:</strong> Menghitung dan mendistribusikan Eco Credits ke dompet Anda.</li>
+            </ul>
+        </div>
+
+        <!-- 3. TRANSPARANSI PUBLIK -->
+        <div class="section-block reveal delay-2">
+            <div class="section-title">
+                <i class="fas fa-globe-americas"></i> 3. Transparansi & Peta Global
+            </div>
+            
+            <div class="alert-box">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>PENTING:</strong> Mengingat misi GreenProof adalah transparansi, sebagian data Anda bersifat PUBLIK.
+                </div>
+            </div>
+
+            <p>Secara default, data berikut akan ditampilkan di <strong>Halaman Peta Global (global-map.html)</strong> yang dapat diakses oleh siapa saja di dunia:</p>
+            <ul>
+                <li><strong>Foto Pohon:</strong> Bukti tanam dan update perkembangan.</li>
+                <li><strong>Lokasi GPS:</strong> Titik koordinat pohon di peta dunia.</li>
+                <li><strong>Username:</strong> Nama pengguna yang menanam (bukan data pribadi sensitif).</li>
+                <li><strong>Jenis Tanaman:</strong> Nama spesies pohon yang ditanam.</li>
+            </ul>
+            <p style="background: #f1f5f9; padding: 10px; border-radius: 8px; font-size: 0.85rem;">
+                <em><i class="fas fa-lock"></i> Data yang TIDAK pernah dipublikasikan:</em> Email, nomor telepon, riwayat transaksi keuangan detail, dan Private Key dompet Anda.
+            </p>
+        </div>
+
+        <!-- 4. PEMBERITAHUAN DATA -->
+        <div class="section-block reveal delay-2">
+            <div class="section-title">
+                <i class="fas fa-clock"></i> 4. Retensi & Penghapusan Data
+            </div>
+            <p>Kami akan menyimpan data pohon Anda selama pohon tersebut tercatat dalam ekosistem GreenProof. Jika Anda menghapus akun Anda:</p>
+            <ul>
+                <li>Data akun akan dihapus dari server kami.</li>
+                <li>Namun, data <strong>Pohon</strong> dan <strong>Foto</strong> yang telah diverifikasi dan tercatat di Blockchain/Publik Map <strong>TIDAK dapat dihapus</strong> demi menjaga integritas data lingkungan secara historis.</li>
+            </ul>
+        </div>
+
+        <!-- 5. KEAMANAN -->
+        <div class="section-block reveal delay-3">
+            <div class="section-title">
+                <i class="fas fa-shield-virus"></i> 5. Keamanan Data
+            </div>
+            <p>Kami menerapkan langkah-langkah keamanan yang wajar untuk melindungi data Anda dari akses yang tidak sah, termasuk enkripsi data saat transmisi dan penyimpanan. Namun, tidak ada metode transmisi melalui Internet atau metode penyimpanan elektronik yang 100% aman.</p>
+        </div>
+
+        <!-- 6. HUBUNGI KAMI -->
+        <div class="section-block reveal delay-3">
+            <div class="section-title">
+                <i class="fas fa-envelope-open-text"></i> 6. Pertanyaan & Kontak
+            </div>
+            <p>Jika Anda memiliki pertanyaan tentang kebijakan privasi ini atau perlakuan data pribadi Anda, silakan hubungi kami:</p>
+            <p style="font-weight: 600; color: var(--primary); font-size: 1.1rem; margin-top: 15px;">
+                <i class="fas fa-envelope"></i> privacy@greenproof.com
+            </p>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer-note reveal">
+            <p>&copy; 2026 Green Pi. Dibangun dengan integritas dan transparansi.</p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 1. LOGIKA TOMBOL KEMBALI (SMART BACK)
+        function goBack() {
+            // Cek apakah ada riwayat halaman sebelumnya
+            if (window.history.length > 1) {
+                // Jika ada, kembali ke halaman sebelumnya
+                window.history.back();
+            } else {
+                // Jika tidak ada (misal dibuka di tab baru), arahkan ke index.html
+                window.location.href = 'index.html';
+            }
+        }
+
+        // 2. LOGIKA ANIMASI SCROLL (INTERSECTION OBSERVER)
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1 // Animasi mulai saat 10% elemen terlihat
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // Opsional: Hentikan observasi setelah animasi berjalan sekali
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const elements = document.querySelectorAll('.reveal');
+            elements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>

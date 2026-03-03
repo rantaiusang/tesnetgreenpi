@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard - GreenProof</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #10b981;
+            --primary-dark: #047857;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --bg-body: #f1f5f9;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding-bottom: 90px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- NAVIGATION --- */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        /* LOGO: DIV STATIS (TIDAK ADA LINK/HREF) */
+        .nav-brand { 
+            font-weight: 800; 
+            font-size: 1.25rem; 
+            color: var(--primary); 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            pointer-events: none; 
+            user-select: none;
+        }
+
+        /* USER AREA (Kanan Atas): Avatar & Logout */
+        .nav-user { display: flex; align-items: center; gap: 15px; }
+        
+        .user-avatar {
+            width: 35px; height: 35px;
+            background: #ecfdf5;
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold;
+            border: 1px solid #d1fae5;
+            cursor: pointer;
+        }
+        
+        /* Tombol Logout (HANYA INI YG LOGOUT) */
+        .logout-btn { 
+            background: #f1f5f9; 
+            border: none; 
+            color: var(--text-muted); 
+            font-size: 1rem; 
+            cursor: pointer; 
+            padding: 8px; 
+            border-radius: 50%;
+            transition: all 0.2s;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logout-btn:hover { background: #fee2e2; color: #ef4444; }
+
+        /* --- CONTAINER --- */
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+
+        /* --- HEADER SECTION --- */
+        .header-welcome { margin-bottom: 24px; }
+        .header-welcome h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        .header-welcome p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* --- STATS CARDS --- */
+        .stats-container {
+            display: flex; gap: 15px; overflow-x: auto;
+            padding-bottom: 10px; margin-bottom: 24px;
+            -ms-overflow-style: none; scrollbar-width: none;
+        }
+        .stats-container::-webkit-scrollbar { display: none; }
+
+        .stat-card {
+            background: var(--surface); min-width: 140px; padding: 20px;
+            border-radius: var(--radius); box-shadow: var(--shadow-sm);
+            flex: 1; position: relative; overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .stat-card:active { transform: scale(0.98); }
+        
+        .stat-icon {
+            position: absolute; top: 15px; right: 15px;
+            font-size: 1.2rem; opacity: 0.2;
+        }
+        .stat-val { font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+        .stat-label { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+
+        .stat-card.credit { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+        .stat-card.credit .stat-val, .stat-card.credit .stat-label, .stat-card.credit .stat-icon { color: white; opacity: 1; }
+        .stat-card.credit .stat-icon { opacity: 0.3; }
+
+        /* --- LIST SECTION --- */
+        .section-title {
+            font-size: 1.1rem; font-weight: 700; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .section-title a {
+            font-size: 0.8rem; color: var(--primary); text-decoration: none; font-weight: 600;
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        .tree-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        .tree-item {
+            background: var(--surface); padding: 16px;
+            border-radius: var(--radius); box-shadow: var(--shadow-sm);
+            display: flex; align-items: center; gap: 15px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            animation: slideUp 0.5s ease-out backwards;
+        }
+        .tree-item:hover { background: #f8fafc; }
+        .tree-item:active { transform: scale(0.99); }
+        
+        .tree-item:nth-child(1) { animation-delay: 0.1s; }
+        .tree-item:nth-child(2) { animation-delay: 0.2s; }
+        .tree-item:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .tree-img-thumb {
+            width: 60px; height: 60px; border-radius: 12px;
+            object-fit: cover; background: #e2e8f0; flex-shrink: 0;
+        }
+        
+        .tree-info { flex: 1; min-width: 0; }
+        .tree-name { 
+            font-weight: 700; font-size: 1rem; color: var(--text-main); 
+            margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+        .tree-meta { display: flex; align-items: center; gap: 10px; font-size: 0.75rem; color: var(--text-muted); }
+        
+        .tree-status { font-size: 0.8rem; font-weight: 600; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; }
+        .status-verified { background: #ecfdf5; color: var(--primary); }
+        .status-pending { background: #fffbeb; color: var(--accent); }
+
+        .nav-arrow { color: #cbd5e1; font-size: 1.1rem; }
+
+        /* --- FAB --- */
+        .fab {
+            position: fixed; bottom: 25px; right: 25px;
+            background: var(--primary); color: white;
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 900; text-decoration: none;
+        }
+        .fab:hover { transform: scale(1.1) rotate(90deg); background: var(--primary-dark); }
+        .fab:active { transform: scale(0.9); }
+        
+        /* Teks di dalam FAB (Opsional, jika ingin ada teks di samping tombol plus) */
+        .fab-text {
+            font-size: 0.8rem; font-weight: 600; margin-left: 5px;
+        }
+
+        /* --- EMPTY STATE --- */
+        .empty-state {
+            text-align: center; padding: 40px 20px; color: var(--text-muted);
+        }
+        .empty-icon { font-size: 3rem; margin-bottom: 15px; opacity: 0.3; }
+
+        @media (min-width: 768px) {
+            .container { max-width: 800px; }
+            .stats-container { flex-wrap: wrap; overflow: visible; }
+            .stat-card { min-width: auto; flex: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <!-- KIRI: Logo (DIV STATIS) -->
+        <div class="nav-brand">
+            <i class="fas fa-leaf"></i> Green Pi
+        </div>
+
+        <!-- KANAN: User Area (Avatar + Tombol Logout) -->
+        <div class="nav-user">
+            <!-- Avatar User -->
+            <div class="user-avatar" id="user-initial" title="Profil Saya">U</div>
+            
+            <!-- Tombol Logout (FUNGSI LOGOUT -> INDEX) -->
+            <button class="logout-btn" onclick="handleLogout()" title="Keluar">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header-welcome">
+            <h1 id="welcome-text">Halo, User!</h1>
+            <p>Mari lanjutkan misi penghijauanmu hari ini.</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <i class="fas fa-tree stat-icon" style="color: var(--primary);"></i>
+                <div class="stat-val" id="total-trees">0</div>
+                <div class="stat-label">Total Pohon</div>
+            </div>
+            <div class="stat-card credit">
+                <i class="fas fa-coins stat-icon"></i>
+                <div class="stat-val" id="total-credit">0.00</div>
+                <div class="stat-label">Eco Credits</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-star stat-icon" style="color: var(--accent);"></i>
+                <div class="stat-val" style="font-size: 1.5rem;">100</div>
+                <div class="stat-label">Reputasi</div>
+            </div>
+        </div>
+
+        <!-- EXPLORE CARD DIHAPUS SESUAI PERMINTAAN -->
+
+        <!-- List Pohon -->
+        <div class="section-title">
+            <span><i class="fas fa-history" style="margin-right: 8px; color: var(--primary);"></i> Riwayat Penanaman</span>
+            <a href="detail.html">Lihat Detail <i class="fas fa-chevron-right"></i></a>
+        </div>
+        <div id="tree-list" class="tree-list">
+            <!-- Data akan diisi oleh JS -->
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fas fa-seedling"></i></div>
+                <p>Belum ada pohon yang ditanam.</p>
+                <p style="font-size: 0.8rem; margin-top:5px;">Tekan tombol + untuk mulai!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button (FAB) -->
+    <!-- UPDATE: Link ke plant.html -->
+    <a href="plant.html" class="fab">
+        <i class="fas fa-plus"></i>
+    </a>
+
+    <!-- LOGIC -->
+    <script type="module">
+        import { supabase } from './js/supabase.js';
+        import { getSession as getAuthSession } from './js/auth.js';
+
+        // Fungsi Logout Langsung Redirect ke Index HTML
+        function handleLogout() {
+            // 1. Hapus sesi lokal agar user dianggap logout
+            localStorage.removeItem('user_session');
+            
+            // 2. Coba panggil logout backend (opsional, tidak ditunggu hasilnya agar cepat)
+            import('./js/auth.js').then(m => m.logout()).catch(e => console.log(e));
+
+            // 3. PAKSA redirect ke index.html
+            window.location.href = 'index.html';
+        }
+
+        // Expose fungsi ke window agar bisa dipanggil onclick
+        window.handleLogout = handleLogout;
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                if (end % 1 !== 0) {
+                    obj.innerHTML = (progress * (end - start) + start).toFixed(2);
+                } else {
+                    obj.innerHTML = Math.floor(progress * (end - start) + start);
+                }
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                     obj.innerHTML = end % 1 !== 0 ? end.toFixed(2) : end;
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        async function loadDashboard() {
+            const user = getAuthSession();
+            if (!user) window.location.href = 'login.html';
+
+            document.getElementById('welcome-text').innerText = `Halo, ${user.username || 'Pioneer'}!`;
+            document.getElementById('user-initial').innerText = (user.username || 'U').charAt(0).toUpperCase();
+
+            const { data: trees, error } = await supabase
+                .from('trees')
+                .select('*')
+                .eq('user_id', user.uid)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error("Error fetching trees:", error);
+                return;
+            }
+
+            const totalTrees = trees.length;
+            const verifiedTrees = trees.filter(t => t.status === 'verified');
+            const totalCredit = verifiedTrees.reduce((acc, curr) => acc + (curr.credit || 0), 0);
+
+            animateValue(document.getElementById('total-trees'), 0, totalTrees, 1500);
+            animateValue(document.getElementById('total-credit'), 0, totalCredit, 1500);
+
+            const listContainer = document.getElementById('tree-list');
+            listContainer.innerHTML = '';
+
+            if (trees.length === 0) {
+                listContainer.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-seedling"></i></div>
+                    <p>Belum ada pohon yang ditanam.</p>
+                    <p style="font-size: 0.8rem; margin-top:5px;">Tekan tombol + untuk mulai!</p>
+                </div>`;
+                return;
+            }
+
+            trees.forEach(tree => {
+                const date = new Date(tree.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                const statusClass = tree.status === 'verified' ? 'status-verified' : 'status-pending';
+                const statusText = tree.status === 'verified' ? 'Terverifikasi' : 'Menunggu';
+                const plantName = tree.plant_name || 'Pohon Hijau'; 
+                const imgSrc = tree.photo_url || `https://placehold.co/100x100/10b981/ffffff?text=Tree`;
+
+                const html = `
+                    <div class="tree-item" onclick="window.location.href='tree-detail.html?id=${tree.id}'">
+                        <img src="${imgSrc}" alt="Tree" class="tree-img-thumb">
+                        <div class="tree-info">
+                            <div class="tree-name" title="${plantName}">${plantName}</div>
+                            <div class="tree-meta">
+                                <span>${date}</span>
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 700; color: ${tree.status === 'verified' ? 'var(--primary)' : '#94a3b8'}; font-size: 0.9rem;">
+                                ${tree.credit > 0 ? '+' + tree.credit + ' π' : '-'}
+                            </div>
+                            <div class="nav-arrow"><i class="fas fa-chevron-right"></i></div>
+                        </div>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>
